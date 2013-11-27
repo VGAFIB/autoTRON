@@ -59,7 +59,7 @@ $strlength = strlen($player1)
 if ( $strlength != 0 )
 {
 $copy_folder = microtime();
-
+echo $microtime();
 #copyi to deal with race condition
 copy('multitron',$copy_folder.'/multitron');
 

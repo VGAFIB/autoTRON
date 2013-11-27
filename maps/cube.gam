@@ -1,0 +1,15 @@
+tron3d v1.0
+map cube
+nb_players	4
+nb_bikes	2
+nb_rounds	200
+bonus_round 50
+turbo_duration 8
+ghost_duration 3
+score_bonus 50
+secgame false
+names ? ? ? ?
+
+round -1
+score 0 0 0 0
+status 0 0 0 0

@@ -1,0 +1,3 @@
+{data : [{scores : {labels : ["Dan0","Dan0","Dan0","Dan0"], datasets : [{ fillColor : "5cb85c", strokeColor : "5cb85c", data : [83330,101570,44180,39600] }]},
+wins : {labels : ["Dan0","Dan0","Dan0","Dan0"], datasets : [{ fillColor : "5cb85c", strokeColor : "5cb85c", data : [38,51,11,0] }]}
+}]}

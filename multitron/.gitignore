@@ -1,0 +1,4 @@
+Makefile.deps
+*.o
+Game
+*.t3d

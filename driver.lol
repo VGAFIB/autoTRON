@@ -37,12 +37,30 @@
         <h3 class="text-muted">Auto-Tron</h3>
       </div>
 <?php
-function clean_IA($a)
+#removes the AI prefix
+function clean_AI($a)
 {
 	$a = substr($a,2);
 	$a = substr($a,0,-2);
 	return $a;
 }
+
+#recursively copies a directory (the directory must exist beforehand)
+function recursive_copy($src,$dst) { 
+    $dir = opendir($src); 
+    @mkdir($dst); 
+    while(false !== ( $file = readdir($dir)) ) { 
+        if (( $file != '.' ) && ( $file != '..' )) { 
+            if ( is_dir($src . '/' . $file) ) { 
+                recursive_copy($src . '/' . $file,$dst . '/' . $file); 
+            } 
+            else { 
+                copy($src . '/' . $file,$dst . '/' . $file); 
+            } 
+        } 
+    } 
+    closedir($dir); 
+} 
 
 set_time_limit(20);
 
@@ -58,22 +76,27 @@ $strlength = strlen($player1)
 * strlen($map);
 if ( $strlength != 0 )
 {
-#$copy_folder = echo uniqid();
 
-copy('multitron',$copy_folder.'/multitron');
+#the folder where all the execution will be done
+$tmp_folder = echo uniqid();
+mkdir($tmp_folder);
+
+recursive_copy('multitron',$tmp_folder);
 
 $lineToReplace = 'Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ)';
-shell_exec('sed -i \'/'.$lineToReplace.'/ c\ '.$lineToReplace.' '.$player1.' '.$player2.' '.$player3.' '.$player4.'\''.' multitron/Makefile_autotron');
-#$res = 'cp -f upload/'.$player1.' multitron/'.$player1;
-#DARBIO GIMME WRITE ACCESS PL0X
-copy('upload/'.$player1,'multitron/'.$player1);
-copy('upload/'.$player2,'multitron/'.$player2);
-copy('upload/'.$player3,'multitron/'.$player3);
-copy('upload/'.$player4,'multitron/'.$player4);
-shell_exec('./make.sh 2>&1');
-#$out = '(cd multitron; timeout 10s ./Game '.clean_IA($player1).' '.clean_IA($player2).' '.clean_IA($player3).' '.clean_IA($player4).' < plane.gam)';
-$out = shell_exec('(cd multitron; timeout 10s ./Game '.clean_IA($player1).' '.clean_IA($player2).' '.clean_IA($player3).' '.clean_IA($player4).' < ../maps/'.$map.')');
+shell_exec('sed -i \'/'.$lineToReplace.'/ c\ '.$lineToReplace.' '.$player1.' '.$player2.' '.$player3.' '.$player4.'\''.' '.$tmp_folder);
+
+copy('upload/'.$player1,$tmp_folder.'/'.$player1);
+copy('upload/'.$player2,$tmp_folder.'/'.$player2);
+copy('upload/'.$player3,$tmp_folder.'/'.$player3);
+copy('upload/'.$player4,$tmp_folder.'/'.$player4);
+shell_exec('./make.sh '.$tmp_folder.'/'.' 2>&1');
+# $out = '(cd multitron; timeout 10s ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < plane.gam)';
+$out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < ../maps/'.$map.')');
 file_put_contents('./last_run.json',$out);
+
+# delete the temp folder
+shell_exec('yes | rm -r '.$tmp_folder);
 ?>
 <h1>Results</h1>
 <div class="row">

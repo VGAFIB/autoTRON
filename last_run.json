@@ -1,3 +1,3 @@
-{data : [{scores : {labels : ["Dan0","Dan0","Dan0","Dan0"], datasets : [{ fillColor : "5cb85c", strokeColor : "5cb85c", data : [81800,101020,45130,38840] }]},
-wins : {labels : ["Dan0","Dan0","Dan0","Dan0"], datasets : [{ fillColor : "5cb85c", strokeColor : "5cb85c", data : [39,52,9,0] }]}
+{data : [{scores : {labels : ["Dan0","Dummy","Lollipop","OO7"], datasets : [{ fillColor : "5cb85c", strokeColor : "5cb85c", data : [77120,34250,77850,87930] }]},
+wins : {labels : ["Dan0","Dummy","Lollipop","OO7"], datasets : [{ fillColor : "5cb85c", strokeColor : "5cb85c", data : [33,2,35,30] }]}
 }]}

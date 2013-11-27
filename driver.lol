@@ -62,7 +62,6 @@ function recursive_copy($src,$dst) {
     closedir($dir); 
 } 
 
-set_time_limit(20);
 
 $player1 = escapeshellcmd(htmlspecialchars($_POST["player1"]));
 $player2 = escapeshellcmd(htmlspecialchars($_POST["player2"]));
@@ -76,15 +75,14 @@ $strlength = strlen($player1)
 * strlen($map);
 if ( $strlength != 0 )
 {
-
 #the folder where all the execution will be done
-$tmp_folder = echo uniqid();
-mkdir($tmp_folder);
+$tmp_folder = uniqid();
 
+shell_exec('mkdir '.$tmp_folder);
 recursive_copy('multitron',$tmp_folder);
 
 $lineToReplace = 'Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ)';
-shell_exec('sed -i \'/'.$lineToReplace.'/ c\ '.$lineToReplace.' '.$player1.' '.$player2.' '.$player3.' '.$player4.'\''.' '.$tmp_folder);
+shell_exec('sed -i \'/'.$lineToReplace.'/ c\ '.$lineToReplace.' '.$player1.' '.$player2.' '.$player3.' '.$player4.'\''.' '.$tmp_folder.'/Makefile_autotron');
 
 copy('upload/'.$player1,$tmp_folder.'/'.$player1);
 copy('upload/'.$player2,$tmp_folder.'/'.$player2);
@@ -102,6 +100,7 @@ shell_exec('yes | rm -r '.$tmp_folder);
 <div class="row">
 	<div class="col-xs-12">
 		<h3>Info</h3>
+		<p><?php echo $exec ?></p>	
 		<p>Map: <?php echo $map; ?></p>
 	</div>
 </div>

@@ -58,9 +58,8 @@ $strlength = strlen($player1)
 * strlen($map);
 if ( $strlength != 0 )
 {
-$copy_folder = microtime();
-echo $microtime();
-#copyi to deal with race condition
+#$copy_folder = echo uniqid();
+
 copy('multitron',$copy_folder.'/multitron');
 
 $lineToReplace = 'Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ)';

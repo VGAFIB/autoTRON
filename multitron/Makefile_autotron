@@ -35,7 +35,7 @@ all: Game
 clean:
 	rm -rf Game SecGame *.o *.exe Makefile.deps
 	rm -rf latex refman.pdf
- Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ) AIDan0.o AIOO7.o AILollipop.o AIDummy.o
+ Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ) AIDan0.o AIDan0.o AIDan0.o AIDummy.o
 	$(CXX) $(LDFLAGS) $^ -o $@
 
 SecGame: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o SecGame.o SecMain.o

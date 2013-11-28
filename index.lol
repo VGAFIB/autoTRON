@@ -39,7 +39,7 @@
 	<p class="lead">Simulate hundreds of games against other AIs. Obtain statistics on your games. Improve your code. Win the contest.</p></center>
       <div class="container">
 <div class="well row text-center">
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-sm-6">
 	<form class="form" role="form" action="./upload_file.lol" method="post"
 enctype="multipart/form-data">
 <label for="file">Upload your AI*.o (64 bit Linux)</label>
@@ -47,7 +47,7 @@ enctype="multipart/form-data">
 <center><input class="btn btn-success btn-lg" type="submit" name="submit" value="Submit"></center>
 </form>
 </div>
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-sm-6">
 	<form action="driver.lol" method="post">
 <label>Pick players and map</label><br>
 <select name="player1">
@@ -124,13 +124,13 @@ enctype="multipart/form-data">
 	
 	<div class="container" id="results-container"> 
 <div class="row text-center">
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-sm-6">
 <?php
 $count = json_decode(file_get_contents('./sent_counter.json'));
 echo "<h1 style='margin-top:10px;'># of executions ", $count, "</h1>";
 ?>
 </div>
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-sm-6">
 <div id="fb-root"></div>
 <script>
 (function(d, s, id)
@@ -171,7 +171,7 @@ echo "<h1 style='margin-top:10px;'># of executions ", $count, "</h1>";
     charts[1] = new Chart(document.getElementById(id_s+"wins").getContext("2d")).Bar(data_obj.wins);
     
     </script>
-<div class="row">
+<div class="row" style="margin-top:10px;border-top:1px solid rgb(229, 229, 229);padding-top:20px;">
 <div class="col-xs-12 text-center">
         <p>&copy; 2013 WTFPL – Do What the Fuck You Want to Public License. | by dirbaio - <a href="https://twitter.com/intent/user?screen_name=mllobet">mllobet</a> - <a href="https://github.com/Galbar">alessio</a></p>
 </div>

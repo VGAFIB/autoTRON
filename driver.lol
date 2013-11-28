@@ -89,7 +89,7 @@ copy('upload/'.$player2,$tmp_folder.'/'.$player2);
 copy('upload/'.$player3,$tmp_folder.'/'.$player3);
 copy('upload/'.$player4,$tmp_folder.'/'.$player4);
 shell_exec('./make.sh '.$tmp_folder.'/'.' 2>&1');
-# $out = '(cd multitron; timeout 10s ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < plane.gam)';
+# $out = '(cd multitron; timeout 10s ../hackme/hackme ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < plane.gam)';
 $out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < ../maps/'.$map.')');
 file_put_contents('./last_run.json',$out);
 if (file_exists('./sent_counter.json'))

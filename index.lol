@@ -26,7 +26,7 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
   </head>
-
+	<a href="https://github.com/VGAFIB/autoTRON"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
   <body>
 
     <div class="container">
@@ -123,6 +123,28 @@ enctype="multipart/form-data">
 	 </div>
 	
 	<div class="container" id="results-container"> 
+<div class="row text-center">
+<div class="col-xs-12 col-md-6">
+<?php
+$count = json_decode(file_get_contents('./sent_counter.json'));
+echo "<h1 style='margin-top:10px;'># of executions ", $count, "</h1>";
+?>
+</div>
+<div class="col-xs-12 col-md-6">
+<div id="fb-root"></div>
+<script>
+(function(d, s, id)
+{
+	var js,fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+	fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+<div class="fb-like" data-href="https://vgafib.upc.es/tron/" data-layout="box_count" data-action="like" date-show-faces="false" data-share="false"></div>
+</div>
+</div>
         <p class="lead">Last game played</p>
 	</div>
     <script>
@@ -142,14 +164,18 @@ enctype="multipart/form-data">
     var charts = new Array();
     var data_obj = run_data.data[0];
     var id_s = "canvas-pos0-";
-    $("#results-container").append("<div class='col-xs-12 col-sm-6'><canvas id='"+id_s+"scores' style='height:250;width:100%'></canvas></div>"
-    +"<div class='col-xs-12 col-sm-6'><canvas id='"+id_s+"wins' style='height:250;width:100%'></canvas></div></div>");
+    $("#results-container").append("<div class='col-xs-12 col-sm-6 text-center'><h4>Scores</h4><canvas id='"+id_s+"scores' style='height:250;width:100%'></canvas></div>"
+	    +"<div class='col-xs-12 col-sm-6 text-center'><h4>Number of wins</h4><canvas id='"+id_s+"wins' style='height:250;width:100%'></canvas></div></div>");
 
     charts[0] = new Chart(document.getElementById(id_s+"scores").getContext("2d")).Bar(data_obj.scores, options);
     charts[1] = new Chart(document.getElementById(id_s+"wins").getContext("2d")).Bar(data_obj.wins);
     
     </script>
-        <p>&copy; 2013 WTFPL – Do What the Fuck You Want to Public License. | by dirbaio -  mllobet - alessio</p>
+<div class="row">
+<div class="col-xs-12 text-center">
+        <p>&copy; 2013 WTFPL – Do What the Fuck You Want to Public License. | by dirbaio - <a href="https://twitter.com/intent/user?screen_name=mllobet">mllobet</a> - <a href="https://github.com/Galbar">alessio</a></p>
+</div>
+</div>
       </div>
 
     </div> <!-- /container -->

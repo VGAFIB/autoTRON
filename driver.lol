@@ -92,7 +92,16 @@ shell_exec('./make.sh '.$tmp_folder.'/'.' 2>&1');
 # $out = '(cd multitron; timeout 10s ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < plane.gam)';
 $out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < ../maps/'.$map.')');
 file_put_contents('./last_run.json',$out);
-
+if (file_exists('./sent_counter.json'))
+{
+$count = json_decode(file_get_contents('./sent_counter.json'));
+$count++;
+file_put_contents('./sent_counter.json',json_encode($count));
+}
+else
+{
+file_put_contents('./sent_counter.json',json_encode($count));
+}
 # delete the temp folder
 shell_exec('yes | rm -r '.$tmp_folder);
 ?>
@@ -100,7 +109,6 @@ shell_exec('yes | rm -r '.$tmp_folder);
 <div class="row">
 	<div class="col-xs-12">
 		<h3>Info</h3>
-		<p><?php echo $exec ?></p>	
 		<p>Map: <?php echo $map; ?></p>
 	</div>
 </div>
@@ -123,8 +131,8 @@ shell_exec('yes | rm -r '.$tmp_folder);
 		var data_obj = run_data.data[i];
 		var id_s = "canvas-pos"+i+"-";
 		$("#results-container").append("<div class='row'><div class='col-xs-12 text-center'><p class='lead'>Position "+i+"</p></div>"
-	+"<div class='col-xs-12 col-sm-6'><canvas id='"+id_s+"scores' style='height:250;width:100%'></canvas></div>"
-		+"<div class='col-xs-12 col-sm-6'><canvas id='"+id_s+"wins' style='height:250;width:100%'></canvas></div></div>");
+	+"<div class='col-xs-12 col-sm-6 text-center'><h4>Score</h4><canvas id='"+id_s+"scores' style='height:250;width:100%'></canvas></div>"
+		+"<div class='col-xs-12 col-sm-6 text-center'><h4>Number of wins</h4><canvas id='"+id_s+"wins' style='height:250;width:100%'></canvas></div></div>");
 
 		charts[2*i] = new Chart(document.getElementById(id_s+"scores").getContext("2d")).Bar(data_obj.scores, options);
 		charts[2*i+1] = new Chart(document.getElementById(id_s+"wins").getContext("2d")).Bar(data_obj.wins);

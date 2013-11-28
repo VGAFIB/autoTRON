@@ -6,6 +6,15 @@ function check_AI($a)
 
 }
 
+function is_LIN64_executable($in) {
+	$a = 'upload/'.$in.': '.'ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped';
+	$b = shell_exec('file '.'upload/'.$in);
+	$a = trim($a);
+        $b = trim($b);
+	
+	return strcmp($a,$b);
+}
+
 	$allowedExts = array("o");
 $temp = explode(".", $_FILES["file"]["name"]);
 $extension = end($temp);
@@ -28,7 +37,12 @@ if (in_array($extension, $allowedExts) && mb_detect_encoding($_FILES["file"]["na
      }
       move_uploaded_file($_FILES["file"]["tmp_name"],
       "upload/" . $_FILES["file"]["name"]);
-      echo "Stored in: " . "upload/" . $_FILES["file"]["name"];
+	if (is_LIN64_executable($_FILES["file"]["name"]) != 0)
+	{
+		unlink('upload/'.$_FILES["file"]["name"]);
+		echo "YOUR FILE IS NOT EXECUTABLE -.-";
+	}
+      else echo "Stored in: " . "upload/" . $_FILES["file"]["name"]; 
 ?>
 <center>Èxit! redireccionant en 3 segons...</center>
 <script type="text/javascript">

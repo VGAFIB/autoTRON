@@ -89,21 +89,33 @@ copy('upload/'.$player2,$tmp_folder.'/'.$player2);
 copy('upload/'.$player3,$tmp_folder.'/'.$player3);
 copy('upload/'.$player4,$tmp_folder.'/'.$player4);
 shell_exec('./make.sh '.$tmp_folder.'/'.' 2>&1');
-# $out = '(cd multitron; timeout 10s ../hackme/hackme ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < plane.gam)';
-$out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < ../maps/'.$map.')');
-file_put_contents('./last_run.json',$out);
+
+$out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ../hackme/hackme ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < ../maps/'.$map.' 2> error.out)');
+$err = file_get_contents("$tmp_folder/error.out");
+$err = trim($err);
+
+if($err)
+{
+	echo "<h1>Errors happened!</h1>";
+	echo nl2br(htmlspecialchars($err));
+}
+
+if ($out != "{data : [")
+    file_put_contents('./last_run.json',$out);
+
 if (file_exists('./sent_counter.json'))
 {
-$count = json_decode(file_get_contents('./sent_counter.json'));
-$count++;
-file_put_contents('./sent_counter.json',json_encode($count));
+	$count = json_decode(file_get_contents('./sent_counter.json'));
+	$count++;
+	file_put_contents('./sent_counter.json',json_encode($count));
 }
 else
 {
-file_put_contents('./sent_counter.json',json_encode($count));
+	file_put_contents('./sent_counter.json',json_encode($count));
 }
+
 # delete the temp folder
-shell_exec('yes | rm -r '.$tmp_folder);
+shell_exec('rm -rf '.$tmp_folder);
 ?>
 <h1>Results</h1>
 <div class="row">
@@ -145,11 +157,16 @@ else
 echo "Something went wrong! redirecting...";
 ?>
 <script type="text/javascript">
-setTimeout(function(){window.location.href = "index.php";}, 3000);
+setTimeout(function(){window.location.href = "index.lol";}, 3000);
 </script>
 <?php
 }
 ?>
+<div class="row">
+<div class="col-xs-12 text-center" style="margin-top:30px;border-top:1px solid rgb(229, 229, 229);padding-top:20px;">
+        <p>&copy; 2013 WTFPL – Do What the Fuck You Want to Public License. | by <a href="https://github.com/Dirbaio">dirbaio</a> - <a href="https://twitter.com/intent/user?screen_name=mllobet">mllobet</a> - <a href="https://github.com/Galbar">alessio</a></p>
+</div>
+</div>
     </div> <!-- /container -->
   </body>
 </html>

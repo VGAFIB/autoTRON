@@ -37,16 +37,16 @@ int main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-  	mysetrlimit(RLIMIT_CPU, 1);
+  	mysetrlimit(RLIMIT_CPU, 10);
 	mysetrlimit(RLIMIT_NOFILE, 10);	
-	mysetrlimit(RLIMIT_NPROC, 1);
+	mysetrlimit(RLIMIT_NPROC, 10);
 	mysetrlimit(RLIMIT_DATA, 128*1024*1024);
 	mysetrlimit(RLIMIT_STACK, 16*1024*1024);
 	
 	//check("chroot", chroot("jail"));
 	//check("chdir", chdir("/"));
-	setuid(65534);
-	setgid(65534);
+	setuid(1002);
+	setgid(1002);
 	
 	execvp(argv[1], argv+1);
 	perror("execvp");

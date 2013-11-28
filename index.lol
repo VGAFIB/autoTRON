@@ -173,7 +173,7 @@ echo "<h1 style='margin-top:10px;'># of executions ", $count, "</h1>";
     </script>
 <div class="row" style="margin-top:10px;border-top:1px solid rgb(229, 229, 229);padding-top:20px;">
 <div class="col-xs-12 text-center">
-        <p>&copy; 2013 WTFPL – Do What the Fuck You Want to Public License. | by dirbaio - <a href="https://twitter.com/intent/user?screen_name=mllobet">mllobet</a> - <a href="https://github.com/Galbar">alessio</a></p>
+        <p>&copy; 2013 WTFPL – Do What the Fuck You Want to Public License. | by <a href="https://github.com/Dirbaio">dirbaio</a> - <a href="https://twitter.com/intent/user?screen_name=mllobet">mllobet</a> - <a href="https://github.com/Galbar">alessio</a></p>
 </div>
 </div>
       </div>

@@ -1,7 +1,7 @@
 
 # Config
 
-OPTIMIZE = 2 # Optimization level (0 to 3)
+OPTIMIZE = 0 # Optimization level (0 to 3)
 DEBUG    = 1 # Compile for debugging (0 or 1)
 PROFILE  = 0 # Compile for profile (0 or 1)
 32BITS   = 0 # Produce 32 bits objects on 64 bits systems (0 or 1)
@@ -25,7 +25,7 @@ ifeq ($(strip $(32BITS)),1)
 	ARCHFLAGS=-m32
 endif
 
-CXXFLAGS = -Wall -Wno-unused-variable $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE)) -std=c++11 -pthread
+CXXFLAGS = -Wall -Wno-unused-variable -Wno-sign-compare $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE)) -std=c++11 -pthread
 LDFLAGS  = -lm $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIM)) $(CXXFLAGS)
 
 # Rules

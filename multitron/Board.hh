@@ -109,7 +109,11 @@ class Board {
 	 * The const modifier helps to ensure that we modify the board we will return and not this one.
      */
     Board next (const vector<Action>& actions_commanded, Action& actions_done) const;
-    void nextNoCopy (const vector<Action>& actions_commanded, Action& actions_done) ;
+	void nextNoCopy (const vector<Action>& actions_commanded, Action& actions_done) ;
+
+
+	//Bugfix
+	vector< vector<int> > hack_guarro;
 
 public:
 
@@ -123,7 +127,7 @@ public:
      * Return a string with the game name and version
      */
     static string version () {
-		return "tron3d v1.0";
+		return "tron3d v1.1";
 	}
     
     /**
@@ -319,6 +323,5 @@ inline Bonus char2bonus(char c) {
         }
 	}
 }
-
 
 #endif

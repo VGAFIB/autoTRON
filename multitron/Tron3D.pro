@@ -15,7 +15,9 @@ SOURCES += \
     Main.cc \
     Player.cc \
     Registry.cc \
-    AITorraTorra.cc
+    AITorraTorra.cc \
+    AIGigakiwi.cc \
+    AICarlapwns.cc
 
 HEADERS += \
     Action.hh \
@@ -28,5 +30,8 @@ HEADERS += \
 
 OTHER_FILES += \
     run.sh \
-    Makefile
+    Makefile \
+    icosahedron.gam \
+    viewer.js \
+    viewer.html
 

@@ -6,9 +6,11 @@
 #include "Board.hh"
 #include "Action.hh"
 #include "Registry.hh"
+#include<sstream>
 
 using namespace std;
 
+extern stringstream deb;
 
 /***
  * Abstract base class for players.

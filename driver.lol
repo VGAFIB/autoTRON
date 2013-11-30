@@ -90,9 +90,11 @@ copy('upload/'.$player3,$tmp_folder.'/'.$player3);
 copy('upload/'.$player4,$tmp_folder.'/'.$player4);
 shell_exec('./make.sh '.$tmp_folder.'/'.' 2>&1');
 
-$out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ../hackme/hackme ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' < ../maps/'.$map.' 2> error.out)');
-$err = file_get_contents("$tmp_folder/error.out");
-$err = trim($err);
+$out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ../hackme/hackme ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' -i ../maps/'.$map.' -o '.$tmp_folder.'/error.out)');
+echo $out;
+$err = "";
+#$err = file_get_contents($tmp_folder.'/error.out');
+#$err = trim($err);
 
 if($err)
 {

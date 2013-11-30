@@ -20,10 +20,10 @@ var assignatura = getURLParameter("ass"); //Not used, but given as paramter some
 var print_adjacency_matrix = false; //The game runner needs it
 var map_transparency = 0.8;
 var player_colors = {
-    0: "#BB3333",
+    0: "#FF3322",
     1: "#22EE11",
     2: "#33AAEE",
-    3: "#BB11BB"
+    3: "#FF22BB"
 }
 
 // Game data
@@ -446,6 +446,9 @@ function Bike (id) {
         }
     } else { //2D trail
         var vertices = [];
+		var vertex = data.rounds[0].bikes[this.id].vertex;
+		vertices.push( board.vertices[vertex] );
+		vertices.push( board.vertices[vertex].plusNormal(0.05) );
         for (var i = 0; i <= this.last_alive; i++) {
             var vertex = data.rounds[i].bikes[this.id].vertex;
             vertices.push( board.vertices[vertex] );
@@ -462,6 +465,7 @@ function Bike (id) {
             geometry.computeCentroids();
             this.staticTail.push(new THREE.Mesh(geometry, material));
         }
+		this.staticTail.push(new THREE.Mesh(geometry, material));
     }
     //TODO: 3D tail
 /*
@@ -523,35 +527,38 @@ Bike.prototype.animate = function(delta_time) {
 }
 
 Bike.prototype.update = function() {
-	
+		
 	//Kind of delta time
     var lerp_fraction = (next_update - last_update) / time_per_round;
-	
+
     var round = data.rounds[actRound].bikes[this.id];
 
-    var isAlive = (actRound <= this.last_alive || (lerp_fraction > 0.9 && actRound == this.last_alive+1)); //Written this way to display the moment of the crash
-	
+    var isAlive = (actRound < this.last_alive || (lerp_fraction > 0.9 && actRound == this.last_alive)); //Written this way to display the moment of the crash
+
 	if (isAlive != this.was_alive) {
         this.was_alive = isAlive;
         if (isAlive) {
             scene.add(this.mesh);
             scene.add(this.dynamicTail_mesh);
-            scene.add(this.staticTail[actRound]);
+            this.last_staticTail = this.staticTail[actRound];
+			scene.add(this.last_staticTail);
         } else {
 			if (!gamePaused) {
-				sfx_crash.currentTime = 0;
-				sfx_crash.play();
+                //sfx_crash.currentTime = 0;
+                //sfx_crash.play();
             }
-			scene.remove(this.mesh);
-            scene.remove(this.dynamicTail_mesh);
-            scene.remove(this.staticTail[this.round]);
         }
     }
 
-    if (!isAlive) return;
+    if (!isAlive) {
+		scene.remove(this.mesh);
+		scene.remove(this.dynamicTail_mesh);
+		scene.remove(this.last_staticTail);
+		return;
+	}
 
-     if (actRound % 2 && round.turbo_duration <= 0 && !this.was_turbo) {
-        round = data.rounds[actRound-1].bikes[this.id];
+    if (actRound % 2 && round.turbo_duration <= 0) {
+        round = data.rounds[actRound+1].bikes[this.id];
     }
 
     this.from = board.vertices[round.vertex];
@@ -561,8 +568,7 @@ Bike.prototype.update = function() {
     else if (lerp_fraction < 0) lerp_fraction = 0;
     if (round.turbo_duration <= 0) {
         lerp_fraction /= 2;
-        if (!(actRound % 2)) lerp_fraction += 0.5;
-
+        if ((actRound % 2)) lerp_fraction += 0.5;
     }
 
     //Set orientation
@@ -581,7 +587,7 @@ Bike.prototype.update = function() {
     this.mesh.position = this.mesh.position.plusNormal(0.05);
 
     if (this.to != this.from) {
-        this.mesh.rotateX(-0.15);
+        this.mesh.rotateX(-0.05);
     }
 
     //Update dynamic tail
@@ -593,10 +599,12 @@ Bike.prototype.update = function() {
     this.dynamicTail.computeCentroids();
 
     //Update static tail
-    if (this.round != actRound) {
-        scene.remove(this.staticTail[this.round]);
-        scene.add(this.staticTail[actRound]);
-        this.round = actRound;
+	var staticTailRound = actRound+1;
+	if (this.round != staticTailRound) {
+        scene.remove(this.last_staticTail);
+		this.last_staticTail = this.staticTail[staticTailRound];
+        scene.add(this.last_staticTail);
+        this.round = staticTailRound;
     }
 
     //Bonus item in inventory indicator
@@ -622,6 +630,14 @@ Bike.prototype.update = function() {
     }
     if (this.bonusIndicator) this.bonusIndicator.update();
 
+    //Turbo mode effect
+    var is_turbo = (round.turbo_duration > 0);
+    if (is_turbo != this.was_turbo) {
+        var scale = is_turbo? 1.5 : 1;
+        this.mesh.scale.set(scale,scale,scale);
+        this.was_turbo = is_turbo;
+    }
+
     //Ghost mode effect
     var is_ghost = (round.ghost_duration > 0);
     if (is_ghost != this.was_ghost) {
@@ -631,13 +647,6 @@ Bike.prototype.update = function() {
         this.was_ghost = is_ghost;
     }
 
-    //Turbo mode effect
-    var is_turbo = (round.turbo_duration > 0);
-    if (is_turbo != this.was_turbo) {
-        var scale = is_turbo? 1.5 : 1;
-        this.mesh.scale.set(scale,scale,scale);
-        this.was_turbo = is_turbo;
-    }
 
 }
 
@@ -675,8 +684,8 @@ Bonus.prototype.update = function() {
     if (this.visible != should_be_visible) {
         if (this.visible) {
 			if (!gamePaused) {
-				sfx_bonus.currentTime = 0;
-				sfx_bonus.play();
+                //sfx_bonus.currentTime = 0;
+                //sfx_bonus.play();
 			}
             scene.remove(this.mesh);
         } else {
@@ -777,7 +786,7 @@ function parseData (raw_data_str) {
         return false;
     }
     data.version = t[p++];
-    if (data.version != "v1.0") {
+    if (data.version != "v1.0" && data.version != "v1.1") {
         alert("Unsupported game version! Trying to load it anyway.");
     }
 
@@ -839,49 +848,67 @@ function parseData (raw_data_str) {
         }
 
         // vertices
-        //Actually we don't need to store each vertex, we only want to know
-        //about the bonuses (that are read below), skipping this part
-        var vertices_str = t[p++];
-        var vertices = vertices_str.split('');
-        /*
-        data.rounds[round].vertices = [ ];
-        for (var i in vertices) {
-            var v = vertices[i];
-            if (v >= '0' && v <= '9') {
-                data.rounds[round].vertices.push({
-                    wall: int(v),
-                    bonus: 'n'
-                });
-            } else {
-                data.rounds[round].vertices.push({
-                    wall: -1,
-                    bonus: v
-                });
-            }
-        }
-        */
+		if (data.version == "v1.0") {
+			var vertices_str = t[p++];
+			var vertices = vertices_str.split('');
+			if (round == data.bonus_round) {
+				data.bonus_vertices = {};
+				for (var i in vertices) {
+					var v = vertices[i];
+					if (v == 'p' || v == 'g' || v == 't') {
+						data.bonus_vertices[i] = {
+							type: v,
+							duration: data.bonus_round+1
+						}
+					}
+				}
+			} else if (round > data.bonus_round) {
+				for (var i in vertices) {
+					var v = vertices[i];
+					if (v == 'p' || v == 'g' || v == 't') {
+						data.bonus_vertices[i].duration++;
+					}
+				}
+			}
+		} else {
+			data.rounds[round].vertices = [ ];
+			while(true) {
+				var wall = t[p++];
+				if (wall == -9) break;
+				var bonus = t[p++];
+				data.rounds[round].vertices.push({
+					wall: wall,
+					bonus: bonus
+				});
+				var endtoken; 
+				do {
+					endtoken = t[p++]; //Skip bug hack
+				} while(endtoken != -8);
+			}
 
-        // bonuses
-        if (round == data.bonus_round) {
-            data.bonus_vertices = {};
-            for (var i in vertices) {
-                var v = vertices[i];
-                if (v == 'p' || v == 'g' || v == 't') {
-                    data.bonus_vertices[i] = {
-                        type: v,
-                        duration: data.bonus_round+1
-                    }
-                }
-            }
-        } else if (round > data.bonus_round) {
-            for (var i in vertices) {
-                var v = vertices[i];
-                if (v == 'p' || v == 'g' || v == 't') {
-                    data.bonus_vertices[i].duration++;
-                }
-            }
-        }
-
+			// bonuses
+			var vertices = data.rounds[round].vertices;
+			if (round == data.bonus_round) {
+				data.bonus_vertices = {};
+				for (var i in vertices) {
+					var b = vertices[i].bonus;
+					if (b == 'p' || b == 'g' || b == 't') {
+						data.bonus_vertices[i] = {
+							type: b,
+							duration: data.bonus_round+1
+						}
+					}
+				}
+			} else if (round > data.bonus_round) {
+				for (var i in vertices) {
+					var b = vertices[i].bonus;
+					if (b == 'p' || b == 'g' || b == 't') {
+						data.bonus_vertices[i].duration++;
+					}
+				}
+			}
+		}
+		
         // bikes
         var someone_alive = false;
         data.rounds[round].bikes = [ ];
@@ -930,8 +957,7 @@ function parseData (raw_data_str) {
             if (round < 10) { //If all bikes are dead the first rounds, do not limit the duration
                 endRound = data.nb_rounds;
             } else {
-                if (round%2) endRound = round+1;
-                else endRound = round+2;
+                endRound = round;
                 if (endRound > data.nb_rounds) endRound = data.nb_rounds;
             }
         }
@@ -989,12 +1015,26 @@ function initGame (raw_data) {
 }
 
 
+function initGameDebug(raw_data)
+{
+    var arr = raw_data.split("LOLSEPARATOR1234");
+    console.log(arr);
+
+    var k = 0;
+    for(var i = 0; i < data.nb_rounds; i++)
+    {
+        data.rounds[i].debug = new Array();
+        for(var j = 0; j < data.nb_players; j++)
+            data.rounds[i].debug[j] = arr[k++];
+    }
+}
+
 
 function initScene () {
 
     // Canvas and renderer
 
-    var width = window.innerWidth;
+    var width = window.innerWidth-500;
     var height = window.innerHeight;
 
     container = document.createElement( 'div' );
@@ -1045,10 +1085,10 @@ function initScene () {
     // Lights
 
     if (usingWebGl) {
-        var ambient = new THREE.AmbientLight( 0x992233 );
+        var ambient = new THREE.AmbientLight( 0x333333 );
         scene.add( ambient );
 
-        pointLight = new THREE.PointLight( 0xdddddd );
+        pointLight = new THREE.PointLight( 0xCCCCCC );
         scene.add( pointLight );
     }
 
@@ -1082,9 +1122,16 @@ function initScene () {
 
     // Instantiate board 3D object
 
-    var solidMaterial = new THREE.MeshBasicMaterial({ color:0x222255, opacity: map_transparency, transparent: true });
-    var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x6666AA, wireframe: true, transparent: true } );
-    var multiMaterial = [ solidMaterial, wireframeMaterial ];
+	var multiMaterial;
+	if (usingWebGl) {
+		var solidMaterial = new THREE.MeshLambertMaterial({ color:0x111188, opacity: map_transparency, transparent: true });
+		var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x8888EE, wireframe: true, transparent: true } );
+	    multiMaterial = [ solidMaterial, wireframeMaterial ];	
+	} else {
+		var solidMaterial = new THREE.MeshBasicMaterial({ color:0x222255, opacity: map_transparency, transparent: true });
+		var wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x6666BB, wireframe: true, transparent: true } );
+		multiMaterial = [ solidMaterial, wireframeMaterial ];
+	}
     var board_object = new THREE.SceneUtils.createMultiMaterialObject(board, multiMaterial);
     board_object.children[ 1 ].scale.multiplyScalar(1.001);
     if (data.map == "plane") board_object.children[1].position.z+=0.001; //HACK
@@ -1375,6 +1422,10 @@ function writeGameState () {
         + "</span><br/><br/>";
     }
     document.getElementById("scores").innerHTML = scoreboard;
+    if(data.rounds[actRound].debug)
+        document.getElementById("debug").innerHTML = data.rounds[actRound].debug[1];
+    else
+        document.getElementById("debug").innerHTML = "[NO DEBUG INFO]";
 }
 
 
@@ -1534,6 +1585,7 @@ function init () {
         document.getElementById("loadingdiv").style.display="";
         // load the given game
         loadFile(game, initGame);
+        loadFile(game+".dbg", initGameDebug);
     }
 
 }

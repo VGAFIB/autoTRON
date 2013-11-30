@@ -63,8 +63,6 @@ string score_to_JSON(vector<string> &names, vector<int> &scores) {
 }
 
 
-
-
 int main (int argc, char** argv) {
 
     if (argc == 1) {
@@ -136,14 +134,12 @@ int main (int argc, char** argv) {
 
     istream* is = ifile ? new ifstream(ifile) : &cin ;
     ostream* os = ofile ? new ofstream(ofile) : &cout;
-
-    bool multi = true;
-
-    //JSON
+	ostream* osdeb = new ofstream((string(ofile)+".dbg").c_str());
+	bool multi = true;
 
     if(multi)
     {
-	cout << "{data : [";
+cout << "{data : [";
 	vector<pair<int, int> > scores = Game::multirun(names, *is, 100);
 	//cout<<"     Name    Score  Victories"<<endl;
 	//cout<<"================================"<<endl;
@@ -162,9 +158,10 @@ int main (int argc, char** argv) {
 	cout << "]}";
     }
     else
-        Game::run(names, *is, *os);
+		Game::run(names, *is, *os, *osdeb);
 
     if (ifile) delete is;
     if (ofile) delete os;
+	delete osdeb;
 }
 

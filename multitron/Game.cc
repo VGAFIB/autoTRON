@@ -56,7 +56,7 @@ vector<pair<int, int> > Game::multirun_thread (vector<string> names, Board b0, i
 
 vector<pair<int, int> > Game::multirun (vector<string> names, istream& is, int count)
 {
-//	cout<<"Running with "<<num_threads<<" threads..."<<endl<<flush;
+	//cout<<"Running with "<<num_threads<<" threads..."<<endl<<flush;
 
 	Board b0(is, false);
 
@@ -95,7 +95,9 @@ vector<pair<int, int> > Game::multirun (vector<string> names, istream& is, int c
 	return res;
 }
 
-void Game::run (vector<string> names, istream& is, ostream& os) {
+stringstream deb;
+
+void Game::run (vector<string> names, istream& is, ostream& os, ostream& osdeb) {
 	cerr << "info: loading game" << endl;
 	Board b0(is, false);
 	cerr << "info: loaded game" << endl;
@@ -130,8 +132,10 @@ void Game::run (vector<string> names, istream& is, ostream& os) {
 			cerr << "info:     start player " << player << endl;
 			Action a;
 			players[player]->reset(player, b1, a);
+			deb.str("");
 			players[player]->play();
 			actions.push_back(*players[player]);
+			osdeb<<deb.str()<<"LOLSEPARATOR1234";
 
 			os << player << endl;
 			Action(*players[player]).print(os);

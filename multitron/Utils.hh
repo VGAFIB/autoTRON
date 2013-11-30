@@ -29,16 +29,15 @@ using namespace std;
  * (somehow adapted from err.h and error.h)
  */
 
-#define myerror_at_line(status, error, file, line, ...) { fprintf(stderr, "Error at %s:%i: ", file, line); fprintf(stderr, __VA_ARGS__); if (error) perror(" errno"); fprintf(stderr, "\n"); exit(status); }
-#define myerr(...) myerror_at_line(EXIT_FAILURE, errno, __FILE__, __LINE__, __VA_ARGS__)
-#define myerrx(...) myerror_at_line(EXIT_FAILURE, 0, __FILE__, __LINE__, __VA_ARGS__)
+#define smyerror_at_line(status, error, file, line, ...) { fprintf(stderr, "Error at %s:%i: ", file, line); fprintf(stderr, __VA_ARGS__); if (error) perror(" errno"); fprintf(stderr, "\n"); exit(status); }
+#define smyerr(...) smyerror_at_line(EXIT_FAILURE, errno, __FILE__, __LINE__, __VA_ARGS__)
+#define myerrx(...) smyerror_at_line(EXIT_FAILURE, 0, __FILE__, __LINE__, __VA_ARGS__)
 
 
 /**
  * Hard assert.
  */
-#define check(b) { if (not (b)) {BackTrace::print(); myerror_at_line(EXIT_FAILURE, errno, __FILE__, __LINE__, "Assertion `" #b "' failed in check()."); }}
-
+#define check(b) assert(b)
 
 /**
  * We use a macro to specifically indicate when something is unused,

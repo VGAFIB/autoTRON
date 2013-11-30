@@ -18,7 +18,7 @@ Board::Board (istream& is, bool secgame) {
         string v;
         vs >> v;
         is >> s;
-        assert(s == v);
+        assert(s == v || s == "v1.0");
     };
 
     //Open map file for reading
@@ -30,6 +30,7 @@ Board::Board (istream& is, bool secgame) {
     mapfile >> s >> n;
     assert(s == "vertices");
     vertices_.resize(n);
+	hack_guarro.resize(n);
 
     //Read neighbours from map file
     for (int i = 0; i < n; i++) {
@@ -144,9 +145,9 @@ Board::Board (istream& is, bool secgame) {
                 Bike& b = bikes_[k];
                 b.id = k;
                 b.player = j;
-                b.bonus = None;
                 b.vertex = spawn_vertices_[k];
                 b.alive = true;
+                b.bonus = None;
                 b.turbo_duration = 0;
                 b.ghost_duration = 0;
                 vertices_[b.vertex].bike = b.id;
@@ -161,17 +162,19 @@ Board::Board (istream& is, bool secgame) {
         for (int i = 0; i < (int)vertices_.size(); ++i) {
             Vertex& v = vertices_[i];
             v.id = i;
-            v.bike = -1;
-            char c;
-            is >> c;
-            if (c >= '0' && c <= '9') {
-                v.wall = (int)(c-'0');
-                v.bonus = None;
-            } else {
-                v.wall = -1;
-                v.bonus = char2bonus(c);
-            }
+			char bonus;
+            is >> v.bike >> bonus;
+			v.bonus = char2bonus(bonus);
+			for (int j = 0; j < (int)hack_guarro.size(); ++j) {
+				is >> hack_guarro[i][j];
+			}
+			int endtoken;
+			is >> endtoken;
+			assert(endtoken == -9);
         }
+		int endtoken;
+		is >> endtoken;
+		assert(endtoken == -9);
 
         //Read bikes
         for (int i = 0; i < (int)bikes_.size(); ++i) {
@@ -222,11 +225,14 @@ void Board::print (ostream& os) const {
     //Print vertices
     for (int i = 0; i < (int)vertices_.size(); ++i) {
         const Vertex& v = vertices_[i];
-        if (v.wall != -1) os << v.wall; //If wall is greater than 9, this won't work!
-        else os << bonus2char(v.bonus);
-    }
-    os << endl;
-
+        os << v.wall << " " << bonus2char(v.bonus) << " ";
+		for (int j = 0; j < (int)hack_guarro[i].size(); ++j) {
+			os << hack_guarro[i][j] << " ";
+		}
+		os << -8 << " ";
+    }	
+	os << -9 << endl;
+	
     //Print bikes
     for (int i = 0; i < (int)bikes_.size(); ++i) {
         const Bike& b = bikes_[i];
@@ -333,17 +339,19 @@ void Board::nextNoCopy (const vector<Action>& actions_commanded, Action& actions
             //Perform movement
             bike.vertex = to;
             orig.bike = -1;
-            dest.bike = id;
-
+			
             if (dest.wall == -1) {
                 //If there was no wall, create it
                 dest.wall = bike.id;
+				dest.bike = id;
             } else if (bike.ghost_duration <= 0) {
                 //Stop here if there is a wall and we are not a ghost, so
                 //the bike will explode later for not being marked as moved
                 //cerr << "Kaboom! Bike " << id << " crashed!" << endl;
                 continue;
-            }
+            } else {
+				b.hack_guarro[dest.id].push_back(bike.id);
+			}
 
             //Pick up bonus
             if (dest.bonus != None) {
@@ -381,11 +389,16 @@ void Board::nextNoCopy (const vector<Action>& actions_commanded, Action& actions
             //Remove the bike trail wall
             for (int i = 0; i < (int)b.vertices_.size(); ++i) {
                 if (b.vertices_[i].wall == bike.id) {
-                    b.vertices_[i].wall = -1;
-                }
+					if (b.hack_guarro[i].empty()) {
+						//bug fix: ghost bikes that have been in the same vertices as this bike should claim it as theirs
+						b.vertices_[i].wall = -1;
+					} else {
+						b.vertices_[i].wall = b.hack_guarro[i][b.hack_guarro.size()-1];
+						b.hack_guarro[i].pop_back();
+					}
+				}
             }
-			//Remove the bike
-			b.vertices_[bike.vertex].bike = -1;
+
         }
     }
 

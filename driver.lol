@@ -96,8 +96,10 @@ $err = trim($err);
 
 if($err)
 {
-	echo "<h1>Errors happened!</h1>";
-	echo nl2br(htmlspecialchars($err));
+	echo "SOMETHING WENT WRONG?";
+	echo '<button id="showcerr">Show stderr output</button>';
+	echo '<p id="cerr" style="display: none">'.nl2br(htmlspecialchars($err)).'</p>';
+	echo '<script> $("#showcerr").click(function() { $("#cerr").toggle(); }); </script>';
 }
 
 if ($out != "{data : [")

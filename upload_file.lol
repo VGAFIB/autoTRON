@@ -56,7 +56,7 @@ function is_LIN64_executable($in) {
 	$allowedExts = array("o");
 $temp = explode(".", $_FILES["file"]["name"]);
 $extension = end($temp);
-if (in_array($extension, $allowedExts) && mb_detect_encoding($_FILES["file"]["name"], 'ASCII', true) && strlen($_FILES["file"]["name"]) >= 3 && strlen($_FILES["file"]["name"]) <= 12 && check_AI($_FILES["file"]["name"]) && $_FILES["file"]["size"] <= 2097152)
+if (in_array($extension, $allowedExts) && mb_detect_encoding($_FILES["file"]["name"], 'ASCII', true) && strlen($_FILES["file"]["name"]) >= 3 && strlen($_FILES["file"]["name"]) <= 40 && check_AI($_FILES["file"]["name"]) && $_FILES["file"]["size"] <= 2097152)
   {
   if ($_FILES["file"]["error"] > 0)
     {

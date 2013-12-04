@@ -25,7 +25,7 @@ ifeq ($(strip $(32BITS)),1)
 	ARCHFLAGS=-m32
 endif
 
-CXXFLAGS = -Wall -Wno-unused-variable -Wno-sign-compare $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE)) -std=c++11 -pthread
+CXXFLAGS = -Wall -Wno-unused-variable -Wno-sign-compare $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE)) -std=c++0x -pthread
 LDFLAGS  = -lm $(ARCHFLAGS) $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIM)) $(CXXFLAGS)
 
 # Rules
@@ -36,7 +36,7 @@ clean:
 	rm -rf Game SecGame *.o *.exe Makefile.deps
 	rm -rf latex refman.pdf
 
-Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ) AIDummy.o-LINUX64
+Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ)
 	$(CXX) $(LDFLAGS) $^ -o $@
 
 SecGame: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o SecGame.o SecMain.o

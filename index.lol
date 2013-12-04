@@ -43,7 +43,7 @@
     <div class="col-xs-12 col-sm-6">
        <form class="form" role="form" action="./upload_file.lol" method="post"
        enctype="multipart/form-data">
-       <label for="file">Upload your AI*.o (64 bit Linux)</label>
+       <label for="file">Upload your AI*.o (64 bit Linux)<br>Compile with the latest released version</label>
        <input type="file" name="file" id="file"><br><br><br>
        <center><input class="btn btn-success btn-lg" type="submit" name="submit" value="Submit"></center>
    </form>

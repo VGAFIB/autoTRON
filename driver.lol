@@ -73,28 +73,18 @@ $strlength = strlen($player1)
 * strlen($player3)
 * strlen($player4)
 * strlen($map);
-if ( $strlength != 0 )
-{
-#the folder where all the execution will be done
-$tmp_folder = uniqid();
+if( $strlength == 0 )
+	die("Missing params");
 
-shell_exec('mkdir '.$tmp_folder);
-recursive_copy('multitron',$tmp_folder);
+$player1 = clean_AI($player1);
+$player2 = clean_AI($player2);
+$player3 = clean_AI($player3);
+$player4 = clean_AI($player4);
 
-$lineToReplace = 'Game: BackTrace.o Utils.o Board.o Action.o Player.o Registry.o Game.o Main.o $(PLAYERS_OBJ)';
-shell_exec('sed -i \'/'.$lineToReplace.'/ c\ '.$lineToReplace.' '.$player1.' '.$player2.' '.$player3.' '.$player4.'\''.' '.$tmp_folder.'/Makefile_autotron');
-
-copy('upload/'.$player1,$tmp_folder.'/'.$player1);
-copy('upload/'.$player2,$tmp_folder.'/'.$player2);
-copy('upload/'.$player3,$tmp_folder.'/'.$player3);
-copy('upload/'.$player4,$tmp_folder.'/'.$player4);
-shell_exec('./make.sh '.$tmp_folder.'/'.' 2>&1');
-
-$out = shell_exec('(cd '.$tmp_folder.'; timeout 10s ../hackme/hackme ./Game '.clean_AI($player1).' '.clean_AI($player2).' '.clean_AI($player3).' '.clean_AI($player4).' -i ../maps/'.$map.' -o '.$tmp_folder.'/error.out)');
-echo $out;
+$out = shell_exec("./make.sh $player2 $player2 $player3 $player4 $map 2>error.out");
 $err = "";
-#$err = file_get_contents($tmp_folder.'/error.out');
-#$err = trim($err);
+$err = file_get_contents('error.out');
+$err = trim($err);
 
 if($err)
 {
@@ -118,9 +108,10 @@ else
 	file_put_contents('./sent_counter.json',json_encode($count));
 }
 
-# delete the temp folder
-shell_exec('rm -rf '.$tmp_folder);
 ?>
+
+
+
 <h1>Results</h1>
 <div class="row">
 	<div class="col-xs-12">
@@ -154,18 +145,7 @@ shell_exec('rm -rf '.$tmp_folder);
 		charts[2*i+1] = new Chart(document.getElementById(id_s+"wins").getContext("2d")).Bar(data_obj.wins);
 	}
 </script>
-<?php
-}
-else
-{
-echo "Something went wrong! redirecting...";
-?>
-<script type="text/javascript">
-setTimeout(function(){window.location.href = "index.lol";}, 3000);
-</script>
-<?php
-}
-?>
+
 <div class="row">
 <div class="col-xs-12 text-center" style="margin-top:30px;border-top:1px solid rgb(229, 229, 229);padding-top:20px;">
         <p>&copy; 2013 WTFPL – Do What the Fuck You Want to Public License. | by <a href="https://github.com/Dirbaio">dirbaio</a> - <a href="https://twitter.com/intent/user?screen_name=mllobet">mllobet</a> - <a href="https://github.com/Galbar">alessio</a></p>

@@ -1,8 +1,8 @@
 Makefile.deps
 *.o
 Game
+Game_*
 *.t3d
 *.pro.user
 *.dbg
 *.autosave
-

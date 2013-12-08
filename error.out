@@ -1,4 +1,0 @@
-g++: error: -E or -x required when input is from standard input
-./make.sh: line 12: ./Game_9eed9e564aa260ad7149966e3fc4b13a: No such file or directory
-rm: cannot remove `Game_9eed9e564aa260ad7149966e3fc4b13a': No such file or directory
-rm: cannot remove `-': No such file or directory
